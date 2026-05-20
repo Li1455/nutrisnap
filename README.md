@@ -1,4 +1,4 @@
-# Walkthrough — NutriSnap Calorie & Meal Tracker
+# NutriSnap Calorie & Meal Tracker
 
 **NutriSnap** is a glassmorphic Single Page Application (SPA) that provides calorie tracking, macro distribution, water hydration logs, meal visual uploads, dynamic charting, and virtual AI health coaching.
 
