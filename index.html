@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NutriSnap — Premium Meal Log & Calorie Tracker</title>
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="NutriSnap is a premium calorie tracker and meal logging application featuring interactive weekly analytics, photo meal logs, and an AI health coach.">
+  <meta name="theme-color" content="#0d0f12">
+  
+  <!-- Typography (Google Fonts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Styling -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="dark-mode">
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo-icon">
+          <i data-lucide="leaf"></i>
+        </div>
+        <span class="brand-name">NutriSnap</span>
+      </div>
+      
+      <div class="user-profile-badge">
+        <div class="avatar-container">
+          <div class="avatar-pulse"></div>
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="User Profile" class="user-avatar" id="avatar-img">
+        </div>
+        <div class="user-info">
+          <h4 class="user-name" id="profile-name">Alex Johnson</h4>
+          <span class="user-tag" id="profile-level">Active Achiever</span>
+        </div>
+      </div>
+      
+      <nav class="nav-links">
+        <button class="nav-btn active" data-view="dashboard" id="nav-dashboard">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-btn" data-view="log-meal" id="nav-log-meal">
+          <i data-lucide="plus-circle"></i>
+          <span>Log a Meal</span>
+        </button>
+        <button class="nav-btn" data-view="analytics" id="nav-analytics">
+          <i data-lucide="bar-chart-3"></i>
+          <span>Analytics</span>
+        </button>
+        <button class="nav-btn" data-view="coach" id="nav-coach">
+          <i data-lucide="sparkles"></i>
+          <span>AI Nutrition Coach</span>
+          <span class="badge-spark">AI</span>
+        </button>
+        <button class="nav-btn" data-view="settings" id="nav-settings">
+          <i data-lucide="settings"></i>
+          <span>Settings</span>
+        </button>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle Theme">
+          <i data-lucide="sun" class="sun-icon"></i>
+          <i data-lucide="moon" class="moon-icon"></i>
+          <span id="theme-text">Light Mode</span>
+        </button>
+      </div>
+    </aside>
+    
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="content-header">
+        <div class="header-left">
+          <h1 id="view-title">Welcome back, Alex</h1>
+          <p id="view-subtitle" class="text-secondary">Here's your nutritional overview for today.</p>
+        </div>
+        <div class="header-right">
+          <div class="date-display">
+            <i data-lucide="calendar"></i>
+            <span id="current-date-text">Wednesday, May 20</span>
+          </div>
+          <button class="quick-add-btn" id="header-quick-log" aria-label="Quick Log Meal">
+            <i data-lucide="plus"></i>
+            <span>Log Meal</span>
+          </button>
+        </div>
+      </header>
+      
+      <!-- SPA PANELS -->
+      <div class="panel-container">
+        
+        <!-- 1. DASHBOARD VIEW -->
+        <section class="view-panel active" id="dashboard-view">
+          <!-- Primary Top Stats Row -->
+          <div class="stats-grid">
+            <!-- Calorie Tracker Card -->
+            <div class="glass-card calorie-circle-card">
+              <div class="card-header">
+                <h3>Today's Calories</h3>
+                <span class="goal-pill" id="dashboard-calorie-goal">Goal: 2,000 kcal</span>
+              </div>
+              <div class="card-body calorie-ring-container">
+                <svg class="progress-ring" width="180" height="180">
+                  <circle class="progress-ring-bg" stroke="#1f2937" stroke-width="12" fill="transparent" r="74" cx="90" cy="90" />
+                  <circle class="progress-ring-bar" id="calorie-progress-bar" stroke="url(#calorieGradient)" stroke-width="12" stroke-linecap="round" fill="transparent" r="74" cx="90" cy="90" />
+                  <!-- Gradients for the ring -->
+                  <defs>
+                    <linearGradient id="calorieGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#10B981" />
+                      <stop offset="100%" stop-color="#059669" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <div class="calorie-text-overlay">
+                  <span class="number" id="calories-remaining">2,000</span>
+                  <span class="label">kcal left</span>
+                </div>
+              </div>
+              <div class="calorie-breakdown">
+                <div class="breakdown-item">
+                  <div class="color-dot bg-success"></div>
+                  <div class="item-info">
+                    <span class="val" id="calories-eaten">0</span>
+                    <span class="lbl">Eaten</span>
+                  </div>
+                </div>
+                <div class="breakdown-item">
+                  <div class="color-dot bg-warning"></div>
+                  <div class="item-info">
+                    <span class="val" id="calories-burned">0</span>
+                    <span class="lbl">Exercise</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Macronutrient Distribution Card -->
+            <div class="glass-card macros-card">
+              <div class="card-header">
+                <h3>Macronutrients</h3>
+                <span class="card-action-text" id="macro-status-text">Perfect Balance</span>
+              </div>
+              <div class="card-body macros-list">
+                <!-- Protein Row -->
+                <div class="macro-row">
+                  <div class="macro-meta">
+                    <span class="macro-name"><i data-lucide="beef" class="text-protein"></i> Protein</span>
+                    <span class="macro-ratio" id="protein-ratio">0g / 150g</span>
+                  </div>
+                  <div class="macro-bar-container">
+                    <div class="macro-bar bg-protein" id="protein-progress-bar" style="width: 0%;"></div>
+                  </div>
+                </div>
+                <!-- Carbs Row -->
+                <div class="macro-row">
+                  <div class="macro-meta">
+                    <span class="macro-name"><i data-lucide="wheat" class="text-carbs"></i> Carbohydrates</span>
+                    <span class="macro-ratio" id="carbs-ratio">0g / 225g</span>
+                  </div>
+                  <div class="macro-bar-container">
+                    <div class="macro-bar bg-carbs" id="carbs-progress-bar" style="width: 0%;"></div>
+                  </div>
+                </div>
+                <!-- Fats Row -->
+                <div class="macro-row">
+                  <div class="macro-meta">
+                    <span class="macro-name"><i data-lucide="droplet" class="text-fat"></i> Healthy Fats</span>
+                    <span class="macro-ratio" id="fats-ratio">0g / 67g</span>
+                  </div>
+                  <div class="macro-bar-container">
+                    <div class="macro-bar bg-fat" id="fats-progress-bar" style="width: 0%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Water Intake Card -->
+            <div class="glass-card water-card">
+              <div class="card-header">
+                <h3>Hydration Goal</h3>
+                <span class="goal-pill text-blue" id="water-goal-text">8 Cups</span>
+              </div>
+              <div class="card-body water-widget">
+                <div class="water-glass-container">
+                  <div class="glass-silhouette">
+                    <div class="water-level" id="water-fluid-level" style="height: 0%;">
+                      <div class="wave"></div>
+                    </div>
+                  </div>
+                  <span class="water-count-text" id="water-display">0 / 8 cups</span>
+                </div>
+                <div class="water-controls">
+                  <button class="btn-water-minus" id="btn-water-sub" aria-label="Decrease Water Intake">
+                    <i data-lucide="minus"></i>
+                  </button>
+                  <button class="btn-water-plus" id="btn-water-add" aria-label="Increase Water Intake">
+                    <i data-lucide="plus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Today's Logged Meals Section -->
+          <div class="section-container">
+            <div class="section-header">
+              <h2>Today's Meals</h2>
+              <div class="meal-filters">
+                <span class="filter-pill active" data-filter="all">All</span>
+                <span class="filter-pill" data-filter="Breakfast">Breakfast</span>
+                <span class="filter-pill" data-filter="Lunch">Lunch</span>
+                <span class="filter-pill" data-filter="Dinner">Dinner</span>
+                <span class="filter-pill" data-filter="Snacks">Snacks</span>
+              </div>
+            </div>
+            
+            <div class="meals-grid" id="today-meals-container">
+              <!-- Dynamically rendered meal cards -->
+              <div class="no-meals-state" id="no-meals-placeholder">
+                <div class="empty-icon"><i data-lucide="utensils"></i></div>
+                <p>No meals logged for today yet. Start logging to fuel your day!</p>
+                <button class="btn btn-primary" onclick="switchView('log-meal')">Log Your First Meal</button>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- 2. LOG MEAL VIEW -->
+        <section class="view-panel" id="log-meal-view">
+          <div class="form-grid">
+            <!-- Meal Upload Card -->
+            <div class="glass-card upload-container-card">
+              <div class="card-header">
+                <h3>Meal Visual Upload</h3>
+                <span class="card-action-text">Drag or Drop Image</span>
+              </div>
+              <div class="card-body">
+                <div class="drop-zone" id="meal-drop-zone">
+                  <input type="file" id="meal-image-input" accept="image/*" class="file-input-hidden">
+                  <div class="drop-zone-prompt" id="drop-zone-prompt">
+                    <i data-lucide="camera" class="upload-icon"></i>
+                    <p class="main-prompt">Drag & drop your meal photo here</p>
+                    <p class="sub-prompt">or click to browse from device</p>
+                    <span class="limit-note">JPEG, PNG up to 5MB (Auto-compressed)</span>
+                  </div>
+                  <div class="image-preview-container hidden" id="preview-container">
+                    <img src="" alt="Meal preview" class="img-preview" id="meal-preview-img">
+                    <button class="remove-preview-btn" id="btn-remove-preview" type="button" aria-label="Remove uploaded image">
+                      <i data-lucide="x"></i>
+                    </button>
+                  </div>
+                </div>
+                
+                <!-- Quick Selection Presets -->
+                <div class="presets-section">
+                  <span class="presets-title">Quick Add Presets</span>
+                  <div class="presets-list" id="presets-container">
+                    <!-- Loaded dynamically from mockData.js -->
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Log Form Card -->
+            <div class="glass-card log-form-card">
+              <div class="card-header">
+                <h3>Meal Details</h3>
+                <span class="card-action-text">Enter Macros</span>
+              </div>
+              <div class="card-body">
+                <form id="meal-log-form">
+                  <div class="form-group">
+                    <label for="meal-name">Meal Name <span class="required">*</span></label>
+                    <input type="text" id="meal-name" placeholder="e.g., Grilled Chicken Salad" required>
+                  </div>
+                  
+                  <div class="form-row-2">
+                    <div class="form-group">
+                      <label for="meal-category">Meal Period <span class="required">*</span></label>
+                      <select id="meal-category" required>
+                        <option value="Breakfast">Breakfast</option>
+                        <option value="Lunch" selected>Lunch</option>
+                        <option value="Dinner">Dinner</option>
+                        <option value="Snacks">Snacks</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="meal-calories">Calories (kcal) <span class="required">*</span></label>
+                      <input type="number" id="meal-calories" min="0" placeholder="e.g., 450" required>
+                    </div>
+                  </div>
+                  
+                  <div class="macros-form-grid">
+                    <div class="form-group">
+                      <label for="meal-protein"><i data-lucide="beef" class="text-protein sm-icon"></i> Protein (g)</label>
+                      <input type="number" id="meal-protein" min="0" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                      <label for="meal-carbs"><i data-lucide="wheat" class="text-carbs sm-icon"></i> Carbs (g)</label>
+                      <input type="number" id="meal-carbs" min="0" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                      <label for="meal-fat"><i data-lucide="droplet" class="text-fat sm-icon"></i> Fats (g)</label>
+                      <input type="number" id="meal-fat" min="0" placeholder="0">
+                    </div>
+                  </div>
+                  
+                  <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="btn-clear-form">Clear Form</button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-meal">
+                      <i data-lucide="plus-circle"></i> Log Meal
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- 3. ANALYTICS VIEW -->
+        <section class="view-panel" id="analytics-view">
+          <!-- Analytical High Level Stats cards -->
+          <div class="analytics-stats-grid">
+            <div class="glass-card stat-metric-card">
+              <div class="metric-header">
+                <span class="title">Weekly Calorie Average</span>
+                <span class="icon bg-success-light"><i data-lucide="trending-up" class="text-success"></i></span>
+              </div>
+              <div class="metric-body">
+                <span class="value" id="avg-calories-value">1,940</span>
+                <span class="unit">kcal / day</span>
+              </div>
+              <div class="metric-footer text-success">
+                <i data-lucide="check"></i> <span>Within 5% of target goal</span>
+              </div>
+            </div>
+            
+            <div class="glass-card stat-metric-card">
+              <div class="metric-header">
+                <span class="title">Protein Consistency</span>
+                <span class="icon bg-protein-light"><i data-lucide="award" class="text-protein"></i></span>
+              </div>
+              <div class="metric-body">
+                <span class="value" id="protein-target-rate">85%</span>
+                <span class="unit">target reached</span>
+              </div>
+              <div class="metric-footer text-success">
+                <i data-lucide="arrow-up-right"></i> <span>6/7 days hit limit</span>
+              </div>
+            </div>
+            
+            <div class="glass-card stat-metric-card">
+              <div class="metric-header">
+                <span class="title">Average Water Intake</span>
+                <span class="icon bg-blue-light"><i data-lucide="droplet" class="text-blue"></i></span>
+              </div>
+              <div class="metric-body">
+                <span class="value" id="avg-water-value">6.4</span>
+                <span class="unit">cups / day</span>
+              </div>
+              <div class="metric-footer text-warning">
+                <i data-lucide="alert-circle"></i> <span>Increase by 1.6 cups</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Charts Layout Grid -->
+          <div class="charts-container-grid">
+            <!-- Calorie Chart Card -->
+            <div class="glass-card chart-large-card">
+              <div class="card-header">
+                <div class="chart-header-left">
+                  <h3>Calorie Consumption Trends</h3>
+                  <p class="text-secondary text-xs">Comparison between actual intake and target goal over 7 days</p>
+                </div>
+                <div class="chart-legend">
+                  <span class="legend-item"><span class="legend-color bg-success"></span> Eaten</span>
+                  <span class="legend-item"><span class="legend-color bg-dashed-line"></span> Goal Target</span>
+                </div>
+              </div>
+              <div class="card-body chart-wrapper">
+                <canvas id="calorie-trend-chart"></canvas>
+              </div>
+            </div>
+            
+            <!-- Macronutrients Doughnut Card -->
+            <div class="glass-card chart-small-card">
+              <div class="card-header">
+                <h3>Weekly Average Macros</h3>
+                <p class="text-secondary text-xs">Total ratio distribution</p>
+              </div>
+              <div class="card-body chart-wrapper doughnut-wrapper">
+                <canvas id="macro-dist-chart"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- 4. AI NUTRITION COACH VIEW -->
+        <section class="view-panel" id="coach-view">
+          <div class="coach-grid">
+            <!-- Weekly Summary Suggestions Sidebar -->
+            <div class="glass-card coaching-insights-card">
+              <div class="card-header">
+                <div class="coaching-title-container">
+                  <i data-lucide="sparkles" class="text-sparkle"></i>
+                  <h3>Weekly Health Summary</h3>
+                </div>
+                <span class="pill-spark" id="current-week-label">May 14 — May 20</span>
+              </div>
+              <div class="card-body coaching-content scrollable-container" id="weekly-suggestions-box">
+                <!-- Autogenerated Weekly Insights will insert here dynamically -->
+              </div>
+            </div>
+            
+            <!-- Dynamic Coaching Interactive Chat -->
+            <div class="glass-card coach-chat-card">
+              <div class="chat-header">
+                <div class="coach-avatar-badge">
+                  <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80" alt="Coach Aura" class="coach-avatar">
+                  <div class="active-dot"></div>
+                </div>
+                <div class="coach-meta">
+                  <h3>Coach Aura</h3>
+                  <p class="text-xs text-success">Personal AI Nutrition Expert • Online</p>
+                </div>
+              </div>
+              
+              <div class="chat-messages-container" id="chat-messages-box">
+                <div class="chat-bubble coach">
+                  <div class="bubble-content">
+                    <p>Hello! I'm <strong>Coach Aura</strong>, your personal AI Nutrition Expert. I've analyzed your food logs for the past week! 🍎</p>
+                    <p>Feel free to ask me anything! I can give you recipe ideas, analyze a specific meal, help adjust your diet goals, or answer general fitness questions.</p>
+                  </div>
+                  <span class="chat-time">Just Now</span>
+                </div>
+              </div>
+              
+              <!-- Chat Quick Prompts -->
+              <div class="quick-prompts-bar">
+                <button class="quick-prompt-chip" data-prompt="Am I meeting my daily protein target? How can I increase it?">🥩 Check my protein</button>
+                <button class="quick-prompt-chip" data-prompt="Give me a high-protein, low-carb breakfast recipe idea.">🍳 Quick Recipe idea</button>
+                <button class="quick-prompt-chip" data-prompt="Can you summarize my biggest healthy eating wins this week?">🏆 Summarize my wins</button>
+              </div>
+              
+              <div class="chat-input-area">
+                <input type="text" id="chat-user-input" placeholder="Type a message to Coach Aura..." aria-label="Chat Input">
+                <button class="btn-send-chat" id="btn-send-message" aria-label="Send Message">
+                  <i data-lucide="send"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- 5. SETTINGS VIEW -->
+        <section class="view-panel" id="settings-view">
+          <div class="settings-grid">
+            <!-- Profile Settings Card -->
+            <div class="glass-card profile-settings-card">
+              <div class="card-header">
+                <h3>Personal Nutrition Profile</h3>
+                <span class="card-action-text">Recalculate Macros</span>
+              </div>
+              <div class="card-body">
+                <form id="settings-profile-form">
+                  <div class="form-row-2">
+                    <div class="form-group">
+                      <label for="set-username">Display Name</label>
+                      <input type="text" id="set-username" value="Alex Johnson">
+                    </div>
+                    <div class="form-group">
+                      <label for="set-activity">Activity Level</label>
+                      <select id="set-activity">
+                        <option value="Sedentary">Sedentary (Little/no exercise)</option>
+                        <option value="Light">Lightly Active (1-3 days/week)</option>
+                        <option value="Active" selected>Moderately Active (3-5 days/week)</option>
+                        <option value="VeryActive">Very Active (6-7 days hard training)</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div class="form-row-3">
+                    <div class="form-group">
+                      <label for="set-weight">Weight (kg)</label>
+                      <input type="number" id="set-weight" min="10" max="300" value="78">
+                    </div>
+                    <div class="form-group">
+                      <label for="set-height">Height (cm)</label>
+                      <input type="number" id="set-height" min="50" max="250" value="175">
+                    </div>
+                    <div class="form-group">
+                      <label for="set-target-weight">Target Weight (kg)</label>
+                      <input type="number" id="set-target-weight" min="10" max="300" value="75">
+                    </div>
+                  </div>
+                  
+                  <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save Profile Info</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            
+            <!-- Goals Settings Card -->
+            <div class="glass-card goals-settings-card">
+              <div class="card-header">
+                <h3>Target Thresholds</h3>
+                <span class="card-action-text">Current Goals</span>
+              </div>
+              <div class="card-body">
+                <form id="settings-goals-form">
+                  <div class="form-group">
+                    <label for="set-calorie-goal">Daily Calorie Intake Target (kcal) <span class="required">*</span></label>
+                    <div class="calorie-input-container">
+                      <input type="number" id="set-calorie-goal" min="500" max="10000" value="2000" required>
+                      <span class="suffix">kcal</span>
+                    </div>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="set-water-goal">Daily Water Intake Target (cups)</label>
+                    <div class="calorie-input-container">
+                      <input type="number" id="set-water-goal" min="1" max="50" value="8">
+                      <span class="suffix">cups</span>
+                    </div>
+                  </div>
+                  
+                  <!-- Macronutrient Allocation Slider -->
+                  <div class="macro-allocation-section">
+                    <span class="section-label">Macronutrient Target Ratios (Total: <span id="macro-total-pct">100</span>%)</span>
+                    
+                    <div class="slider-group">
+                      <div class="slider-meta">
+                        <span><i data-lucide="beef" class="text-protein sm-icon"></i> Protein Ratio</span>
+                        <span id="protein-pct-display">30%</span>
+                      </div>
+                      <input type="range" class="macro-slider" id="set-protein-pct" min="0" max="100" value="30">
+                    </div>
+                    
+                    <div class="slider-group">
+                      <div class="slider-meta">
+                        <span><i data-lucide="wheat" class="text-carbs sm-icon"></i> Carbohydrates Ratio</span>
+                        <span id="carbs-pct-display">45%</span>
+                      </div>
+                      <input type="range" class="macro-slider" id="set-carbs-pct" min="0" max="100" value="45">
+                    </div>
+                    
+                    <div class="slider-group">
+                      <div class="slider-meta">
+                        <span><i data-lucide="droplet" class="text-fat sm-icon"></i> Healthy Fats Ratio</span>
+                        <span id="fats-pct-display">25%</span>
+                      </div>
+                      <input type="range" class="macro-slider" id="set-fats-pct" min="0" max="100" value="25">
+                    </div>
+                    
+                    <div class="validation-message text-danger hidden" id="macro-slider-warning">
+                      Ratios must equal exactly 100%. Adjust sliders to balance.
+                    </div>
+                  </div>
+                  
+                  <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="btn-save-goals">Update Targets</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            
+            <!-- Clear Data Settings Card -->
+            <div class="glass-card dangerous-settings-card">
+              <div class="card-header">
+                <h3>App Maintenance & Reset</h3>
+                <span class="card-action-text text-danger">Caution</span>
+              </div>
+              <div class="card-body">
+                <p class="warning-paragraph">This action will erase all logged meals, hydration data, daily targets, and custom profile details, restoring the application to its default demo data state.</p>
+                <div class="reset-actions">
+                  <button type="button" class="btn btn-outline-danger" id="btn-reset-demo">
+                    <i data-lucide="refresh-cw"></i> Reset Demo Data
+                  </button>
+                  <button type="button" class="btn btn-danger" id="btn-wipe-data">
+                    <i data-lucide="trash-2"></i> Wipe All Data
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+      </div>
+    </main>
+    
+  </div>
+  
+  <!-- Loading script files -->
+  <script src="mockData.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
